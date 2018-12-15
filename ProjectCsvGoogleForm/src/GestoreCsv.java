@@ -33,6 +33,7 @@ public class GestoreCsv {
 		StringBuilder sb = new StringBuilder();
 		for (int j=0;j<numColonne;j++)  {
 			for  (int i=0;i<matrice[0].length;i++) {
+				if (matrice[j][i]==null) matrice[j][i]="";
 				sb.append(matrice[j][i].replace('"', ' ').trim()+"\n");
 			}
 			sb.append("\n");
@@ -48,6 +49,7 @@ public class GestoreCsv {
 		for (int j=0;j<numColonne;j++) {
 			sb.append("\t[tr TEXT1]\n");
 			for  (int i=0;i<matrice[0].length;i++) {
+				if (matrice[j][i]==null) matrice[j][i]="";
 				text= matrice[j][i].replace('"', ' ').trim();
 				if (i==0) {
 					if (text.equals("Timestamp")) text="Data questionario: ";
@@ -65,7 +67,7 @@ public class GestoreCsv {
 	}
 	
 	
-	public String getBBCodePerRegioni(String [][] matrice) {
+	public String getBBCodePerCampoTutteLeColonne(String [][] matrice) {
 		HashMap<String,List<Integer>> map = new HashMap<String,List<Integer>>();
 		String campo;
 		for (int j=1;j<matrice[0].length;j++) {
@@ -94,6 +96,49 @@ public class GestoreCsv {
 			}
 			
 			sb.append(campo + "\n\n"+ getBBCode(array)+ "\n\n");
+		}
+		return sb.toString();
+	}
+	
+	
+	public String getBBCodePerCampoTreColonne(String [][] matrice) {
+		HashMap<String,List<Integer>> map = new HashMap<String,List<Integer>>();
+		String campo;
+		for (int j=1;j<matrice[0].length;j++) {
+			campo =matrice[rigaRaggruppamento][j].toUpperCase();
+			List<Integer> list = map.get(campo);
+			if (list==null) {
+				list = new ArrayList<Integer>();
+			} 
+			list.add(j);
+			map.put(campo, list);
+			
+		}
+			
+		Iterator<String> i1 = map.keySet().iterator();
+		StringBuilder sb = new StringBuilder();
+		while (i1.hasNext()) {
+			campo = i1.next();
+			List<Integer> temp = map.get(campo);
+			int size = temp.size();
+			int j=1;
+			Iterator<Integer> i2 = temp.iterator();
+			do  {
+				String [][] array = new String [matrice.length][3];
+				copyColonna (matrice,array,0,0);
+				while (i2.hasNext()) {
+					Integer col = i2.next();
+					copyColonna (matrice,array,col,j%3);
+					j++;
+					if (j%3==0) {
+						j++;
+						break;
+					}
+				}
+				//System.out.println(getMatrice(array));
+				sb.append(campo + "\n\n"+ getBBCode(array)+ "\n\n");
+				
+			} while (j<=size+1);
 		}
 		return sb.toString();
 	}

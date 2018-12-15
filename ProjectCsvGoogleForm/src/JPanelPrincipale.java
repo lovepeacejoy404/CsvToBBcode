@@ -116,7 +116,7 @@ public class JPanelPrincipale extends JPanel{
 	private void printBBCode (String csv) {
 		//textView.setText(getBBCode(getMatrice(csv)));
 		textView.setText(
-				gestore_csv.getBBCodePerRegioni(
+				gestore_csv.getBBCodePerCampoTreColonne(
 						gestore_csv.getMatriceArray(csv)));
 	}
 	
